@@ -85,6 +85,11 @@ class Column
     protected mixed $default = null;
 
     /**
+     * @var mixed
+     */
+    protected mixed $defaultOnNull = null;
+
+    /**
      * @var bool
      */
     protected bool $identity = false;
@@ -160,6 +165,11 @@ class Column
      * @var array|null
      */
     protected ?array $values = null;
+
+    /**
+     * @var array|null
+     */
+    protected ?array $newOptions = null;
 
     /**
      * Column constructor
@@ -296,6 +306,33 @@ class Column
     public function getDefault(): mixed
     {
         return $this->default;
+    }
+
+    /**
+     * Sets the defaultOnNull 4 oracle column value.
+     *
+     * @param mixed $defaultOnNull
+     * @return $this
+     */
+    public function setDefaultOnNull(mixed $defaultOnNull)
+    {
+        $this->defaultOnNull = $defaultOnNull;
+
+        return $this;
+    }
+
+    /**
+     * Gets the default column value.
+     *
+     * @return mixed|null
+     */
+    public function getDefaultOnNull(): mixed
+    {
+        if (isset($this->defaultOnNull)) {
+            return $this->defaultOnNull;
+        }
+
+        return null;
     }
 
     /**
@@ -740,6 +777,7 @@ class Column
         return [
             'limit',
             'default',
+            'defaultOnNull',
             'null',
             'identity',
             'scale',
@@ -803,5 +841,51 @@ class Column
         }
 
         return $this;
+    }
+
+    /**
+     * @param string $columnName The name of the column to change
+     * @param mixed $type The type of the column
+     * @param array $options Additional options for the column
+     */
+    public function setNewOptions(string $columnName, string|Literal $type, array $options): void
+    {
+        $options = array_merge([
+            'name' => $columnName,
+            'type' => $type,
+        ], $options);
+
+        $this->newOptions = $options;
+    }
+
+    /**
+     * Gets the options.
+     *
+     * @return array|null
+     */
+    public function getNewOptions(): ?array
+    {
+        if (isset($this->newOptions)) {
+            return $this->newOptions;
+        }
+
+        return null;
+    }
+
+    /**
+     * @return void
+     */
+    public function unsetDefaultOptions(): void
+    {
+        $currentOptions = get_object_vars($this);
+        $newOptions = $this->getNewOptions();
+
+        $dropOptions = array_diff_ukey($currentOptions, $newOptions, function ($cur, $new) {
+            return (int)($cur !== $new);
+        });
+
+        foreach ($dropOptions as $drop => $value) {
+            unset($this->{$drop});
+        }
     }
 }

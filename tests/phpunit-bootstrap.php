@@ -42,3 +42,8 @@ if (getenv('SQLSRV_DSN')) {
     define('SQLSRV_DB_CONFIG', Util::parseDsn(getenv('SQLSRV_DSN')));
     define('DB_CONFIG', SQLSRV_DB_CONFIG);
 }
+
+if (getenv('ORACLE_DSN')) {
+    define('ORACLE_DB_CONFIG', Util::parseDsn(getenv('ORACLE_DSN')));
+    define('DB_CONFIG', ORACLE_DB_CONFIG);
+}
