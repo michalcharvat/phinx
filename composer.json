@@ -45,6 +45,7 @@
     },
     "require-dev": {
         "ext-json": "*",
+        "ext-pdo": "*",
         "cakephp/cakephp": "^5.0.2",
         "cakephp/cakephp-codesniffer": "^5.0",
         "phpunit/phpunit": "^9.5.19",
